@@ -1,0 +1,13 @@
+qml/QOcamlBrowser/main.js
+qml/QOcamlBrowser/main.qml
+dataobject.cpp
+dataobject.h
+main.cpp
+Makefile
+qmlapplicationviewer.cpp
+qmlapplicationviewer.h
+qmlapplicationviewer.pri
+QOcamlBrowser
+QOcamlBrowser.svg
+QOcamlBrowser64.png
+QOcamlBrowser80.png

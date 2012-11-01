@@ -1,0 +1,6 @@
+#qtcreator files
+*.user
+# C++ files
+moc_*.cpp
+*.o
+
