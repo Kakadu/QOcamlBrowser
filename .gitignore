@@ -1,6 +1,10 @@
 #qtcreator files
 *.user
+QOcamlBrowser.includes
 # C++ files
 moc_*.cpp
 *.o
-
+# vim files
+*.swp
+# executable
+QOcamlBrowser

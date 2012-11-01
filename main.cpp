@@ -2,9 +2,11 @@
 #include <QDeclarativeContext>
 #include "qmlapplicationviewer.h"
 #include "dataobject.h"
+#include "kamlo.h"
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
+    caml_main(argv);
     QScopedPointer<QApplication> app(createApplication(argc, argv));
 
     QmlApplicationViewer viewer;

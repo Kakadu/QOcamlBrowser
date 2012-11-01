@@ -9,7 +9,10 @@ CPPOBJECTS=main.o dataobject.o moc_dataobject.o \
 		  qmlapplicationviewer.o moc_qmlapplicationviewer.o
 
 all: $(MOCFILES) $(CPPOBJECTS)
-	g++ -m64 -Wl,-O1 -o QOcamlBrowser main.o dataobject.o qmlapplicationviewer.o moc_qmlapplicationviewer.o moc_dataobject.o    -L/usr/lib/x86_64-linux-gnu -lQtDeclarative -lQtGui -lQtCore -lpthread 
+	$(MAKE) --no-print-directory ocaml
+	g++ -m64 -Wl,-O1 -o QOcamlBrowser $(CPPOBJECTS) \
+	-L/usr/lib/x86_64-linux-gnu -lQtDeclarative -lQtGui -lQtCore -lpthread \
+	ocaml/camlcode.o -L/usr/lib/ocaml/ -lunix -lasmrun
 
 moc_%.cpp: %.h
 	$(MOCQT4) $< > $@
