@@ -10,14 +10,17 @@ extern "C" {
 }
 
 #define Val_none Val_int(0)
+#define Val_of_some(v) Field(v,0)
+
 static inline value
-Some_val(value v) {
+Some_val(value v) { // 'a -> 'a option
   CAMLparam1(v);
   CAMLlocal1(ans);
   ans = caml_alloc_small(1,0);
   Field(ans,0)=v;
   CAMLreturn(ans);
 }
+
 /*
 #define Kamlolist_of_QList(conv,lst,ans_name) \
 {\

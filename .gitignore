@@ -7,4 +7,6 @@ moc_*.cpp
 # vim files
 *.swp
 # executable
-QOcamlBrowser
+./QOcamlBrowser
+# ocaml files
+*.cm[ioxa]

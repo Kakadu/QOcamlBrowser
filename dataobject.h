@@ -11,11 +11,13 @@ class DataObject : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int tableCount1 READ tableCount NOTIFY tablesChanged)
-    //Q_PROPERTY (int boo READ boo WRITE setBoo NOTIFY booChanged)
+    Q_PROPERTY(QString itemDescripion1 READ itemDescription NOTIFY itemDescriptionChanged)
     QList< QList<QString> > data;
     QList<int> selectedItems;
+    QString _itemDescription;
 public:
     explicit DataObject(QObject *parent = 0);
+    Q_INVOKABLE QString itemDescription() { return _itemDescription; }
     Q_INVOKABLE int tableCount() { return data.length(); }
 
     Q_INVOKABLE int tableLength(int n) {
@@ -55,6 +57,7 @@ public:
 
 signals:
     void tablesChanged(int);
+    void itemDescriptionChanged(QString);
 public slots:
 
 };

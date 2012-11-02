@@ -14,25 +14,19 @@ QList<QList<QString> > initData() {
 DataObject::DataObject(QObject *parent) :
     QObject(parent)
 {
-    /*QList<QString> lst1;
-    lst1 <<"a" << "b" << "c";
-    QList<QString> lst2;
-    lst2 << "1" << "2" << "3";
-    QList<QString> lst3;
-    lst3 << "x" << "y" << "z";
-    data << lst1;// << lst2 << lst3;*/
     data = initData();
     foreach(QList<QString> x, data) {
         Q_UNUSED(x);
         selectedItems.push_back(-1);
     }
     Q_ASSERT(selectedItems.length() == data.length());
+    _itemDescription = "";
 }
 
 
 void DataObject::doOCaml(int lastAffectedColumn) {
     CAMLparam0();
-    CAMLlocal3(_ans,cli,cons);
+    CAMLlocal4(_ans,cli,cons,_ans_msg);
     cli = Val_emptylist;
     QString debugPath = "";
     for (int i=lastAffectedColumn; i>=0; --i) {
@@ -46,18 +40,17 @@ void DataObject::doOCaml(int lastAffectedColumn) {
     value *closure = caml_named_value("caml_path_changed");
     Q_ASSERT(closure!= NULL);
     // this function take int list of selected items
-    //arg = caml_copy_string(path.toLocal8Bit().data());
+    // path_changed: int list -> string string list * string option
     _ans = caml_callback(*closure, cli);
+    _ans_msg = Field(_ans,1);  // is string option
+    _ans = Field(_ans,0);      // is string string list
     QList<QList<QString> > ans;
     QListQListQString_of_caml(_ans,cli,cons,ans);
     data.clear();
     emit tablesChanged(0);
     data = ans;
     emit tablesChanged(data.length());
-    print_data();
-    qDebug() << "Selected items are:";
-    foreach (int i, selectedItems)
-        qDebug() << i << ", ";
+    //print_data();
     while (selectedItems.length() > lastAffectedColumn+1) {
         selectedItems.pop_back();
     }
@@ -67,5 +60,14 @@ void DataObject::doOCaml(int lastAffectedColumn) {
     qDebug() << "Selected items are:";
     foreach (int i, selectedItems)
         qDebug() << i << ", ";
+
+    // setting description
+    if (_ans_msg != Val_none) {
+        _itemDescription = QString( String_val(Val_of_some(_ans_msg)) );
+        qDebug() << "setting itemDescription: " << _itemDescription;
+        emit itemDescriptionChanged(_itemDescription);
+    } else {
+        qDebug() << "no description given";
+    }
     CAMLreturn0;
 }

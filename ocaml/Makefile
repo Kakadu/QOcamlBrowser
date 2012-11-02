@@ -1,4 +1,4 @@
-OCAML=ocamlfind opt -package unix -I `ocamlc -where`/compiler-libs/utils \
+OCAML=ocamlfind opt -package unix -g -I `ocamlc -where`/compiler-libs/utils \
 	  -I `ocamlc -where`/compiler-libs/typing \
 	  `ocamlc -where`/compiler-libs/utils/misc.cmx \
 	  `ocamlc -where`/compiler-libs/typing/primitive.cmx \

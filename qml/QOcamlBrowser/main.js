@@ -47,7 +47,7 @@ function createModel(data,n, parent) {
     ans += "}";
     //console.log(ans);
     var newModel = Qt.createQmlObject(ans, parent, "model"+n);
-    console.log("finishing creating model" + n);
+    //console.log("finishing creating model" + n);
     return newModel;
 }
 

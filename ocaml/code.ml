@@ -105,9 +105,9 @@ let data = ref []
 exception Finished_too_early
 exception Finished
 let path_changed
-  : int list -> string list list =
+  : int list -> string list list * string option =
   with_register "caml_path_changed" begin fun ls ->
-    printf "new path: %s%!" (String.concat "" (List.map (fun i -> "/"^(string_of_int i)) ls));
+    printf "new path: %s\n%!" (String.concat "" (List.map (fun i -> "/"^(string_of_int i)) ls));
     List.iter (fun i -> assert (i>=0)) ls;
     let moduleName = List.nth (List.hd !data) (List.hd ls) in
     let signature = List.assoc moduleName !modules_cache in
@@ -156,6 +156,7 @@ let path_changed
       )
     with Finished -> ()
     in
+    let descr = ref None in
     let () = match !action with
       | None -> assert false
       | Some (`NewView xs) ->
@@ -163,7 +164,7 @@ let path_changed
          data := !data @ [ys]
       | Some (`Describe item) -> begin
            let info ident =
-             printf "describing item `%s`%!" (Ident.name ident) in
+             descr := Some (sprintf "describing item `%s`%!" (Ident.name ident)) in
            match item with
            | Tsig_value     (ident,_) -> info ident
            | Tsig_type    (ident,_,_) -> info ident
@@ -175,7 +176,8 @@ let path_changed
            | Tsig_cltype (ident,_,_)  -> info ident
         end
       in
-      !data
+      (*!data,None*)
+      (!data,!descr)
 end
 
 let init_data : unit -> string list list =
