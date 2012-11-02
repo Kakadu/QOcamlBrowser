@@ -1,2 +1,4 @@
 *.cm[ioax]
 *.o
+#test executable
+test
