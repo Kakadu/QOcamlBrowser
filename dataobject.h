@@ -11,20 +11,28 @@ class DataObject : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int tableCount1 READ tableCount NOTIFY tablesChanged)
-    Q_PROPERTY(QString itemDescripion READ getDescription
-               //WRITE setDescription
+    Q_PROPERTY(QString itemDescription READ getDescription
+               WRITE setDescription
                NOTIFY itemDescriptionChanged)
+    Q_PROPERTY(bool showDescription READ canShowDescription NOTIFY showDescriptionChanged)
     QList< QList<QString> > data;
     QList<int> selectedItems;
     QString _itemDescription;
+    bool _showDescription;
 public:
     explicit DataObject(QObject *parent = 0);
     Q_INVOKABLE QString getDescription() { return _itemDescription; }
     Q_INVOKABLE void setDescription(QString s) {
         if (_itemDescription != s) {
             _itemDescription = s;
-            qDebug() << "setting itemDescription: " << s;
             emit itemDescriptionChanged(s);
+        }
+    }
+    Q_INVOKABLE bool canShowDescription() { return _showDescription; }
+    void setShowDescription(bool x) {
+        if (_showDescription != x) {
+            _showDescription = x;
+            emit showDescriptionChanged(x);
         }
     }
 
@@ -41,7 +49,7 @@ public:
     }
     Q_INVOKABLE void setSelectedIndexAt(int n,int k) {
         if (selectedItems[n] != k) {
-            qDebug() << QString("Setting selected index at %1 to %2").arg(n).arg(k);
+            //qDebug() << QString("Setting selected index at %1 to %2").arg(n).arg(k);
             selectedItems[n] = k;
             doOCaml(n);
         }
@@ -68,6 +76,7 @@ public:
 signals:
     void tablesChanged(int);
     void itemDescriptionChanged(QString);
+    void showDescriptionChanged(bool);
 public slots:
 
 };

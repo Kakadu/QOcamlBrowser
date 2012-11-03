@@ -21,6 +21,7 @@ DataObject::DataObject(QObject *parent) :
     }
     Q_ASSERT(selectedItems.length() == data.length());
     _itemDescription = "";
+    _showDescription = false;
 }
 
 
@@ -64,6 +65,7 @@ void DataObject::doOCaml(int lastAffectedColumn) {
     // setting description
     if (_ans_msg != Val_none) {
         setDescription( QString( String_val(Val_of_some(_ans_msg)) ) );
+        setShowDescription(true);
     }
     CAMLreturn0;
 }
