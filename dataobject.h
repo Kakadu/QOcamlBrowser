@@ -11,13 +11,23 @@ class DataObject : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int tableCount1 READ tableCount NOTIFY tablesChanged)
-    Q_PROPERTY(QString itemDescripion1 READ itemDescription NOTIFY itemDescriptionChanged)
+    Q_PROPERTY(QString itemDescripion READ getDescription
+               //WRITE setDescription
+               NOTIFY itemDescriptionChanged)
     QList< QList<QString> > data;
     QList<int> selectedItems;
     QString _itemDescription;
 public:
     explicit DataObject(QObject *parent = 0);
-    Q_INVOKABLE QString itemDescription() { return _itemDescription; }
+    Q_INVOKABLE QString getDescription() { return _itemDescription; }
+    Q_INVOKABLE void setDescription(QString s) {
+        if (_itemDescription != s) {
+            _itemDescription = s;
+            qDebug() << "setting itemDescription: " << s;
+            emit itemDescriptionChanged(s);
+        }
+    }
+
     Q_INVOKABLE int tableCount() { return data.length(); }
 
     Q_INVOKABLE int tableLength(int n) {

@@ -63,11 +63,7 @@ void DataObject::doOCaml(int lastAffectedColumn) {
 
     // setting description
     if (_ans_msg != Val_none) {
-        _itemDescription = QString( String_val(Val_of_some(_ans_msg)) );
-        qDebug() << "setting itemDescription: " << _itemDescription;
-        emit itemDescriptionChanged(_itemDescription);
-    } else {
-        qDebug() << "no description given";
+        setDescription( QString( String_val(Val_of_some(_ans_msg)) ) );
     }
     CAMLreturn0;
 }

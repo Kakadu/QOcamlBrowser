@@ -49,10 +49,11 @@ Rectangle {
         //x: 0
         //y: lv1.height
         font.family: "Comic Sans MS"
-        text: "asfd"
-    }
+        text: mainData.itemDescription
+        //text: "asdf"
+    }/*
     Binding { target: descriptionTextField; property: 'text';
-        value: mainData.itemDescription()
+        value: mainData.itemDescription1
         when: true
-    }
+    }*/
 }

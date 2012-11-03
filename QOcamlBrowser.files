@@ -4,7 +4,9 @@ dataobject.cpp
 dataobject.h
 main.cpp
 ocaml/code.ml
+ocaml/test.ml
 qmlapplicationviewer.cpp
 qmlapplicationviewer.h
 qmlapplicationviewer.pri
-Makefile
+kamlo.h
+qml/QOcamlBrowser/ScrollBar.qml
