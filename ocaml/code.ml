@@ -163,6 +163,13 @@ let path_changed
          let ys = List.map (fun s -> s |> get_ident_of_signature |> Ident.name) xs in
          data := !data @ [ys]
       | Some (`Describe item) -> begin
+           let b = Buffer.create 100 in
+           let fmt = Format.(formatter_of_buffer b) in
+           let () = Printtyp.signature fmt [item] in
+
+           descr := Some (Buffer.contents b);
+           printf "Describe: %s\n%!" (Buffer.contents b);
+           (*
            let info ident =
              descr := Some (sprintf "describing item `%s`%!" (Ident.name ident)) in
            match item with
@@ -174,9 +181,9 @@ let path_changed
            | Tsig_modtype(ident,_)    -> info ident
            | Tsig_class  (ident,_,_)  -> info ident
            | Tsig_cltype (ident,_,_)  -> info ident
+           *)
         end
       in
-      (*!data,None*)
       (!data,!descr)
 end
 
