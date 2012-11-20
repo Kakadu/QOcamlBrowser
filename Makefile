@@ -5,10 +5,12 @@ MOCQT4=/usr/bin/moc-qt4 -DQT_WEBKIT -DQT_NO_DEBUG -DQT_DECLARATIVE_LIB -DQT_GUI_
 
 .SUFFIXES: .cpp .h .o
 .PHONY: all
+CPP_LOGIC_CLASS=Asdf
 
-MOCFILES=moc_qmlapplicationviewer.cpp moc_dataobject.cpp  
-CPPOBJECTS=main.o dataobject.o moc_dataobject.o \
-		  qmlapplicationviewer.o moc_qmlapplicationviewer.o
+MOCFILES=moc_qmlapplicationviewer.cpp  moc_$(CPP_LOGIC_CLASS).cpp  
+CPPOBJECTS=main.o qmlapplicationviewer.o moc_qmlapplicationviewer.o \
+	$(CPP_LOGIC_CLASS).o moc_$(CPP_LOGIC_CLASS).o
+	
 
 all: kamlo $(MOCFILES) $(CPPOBJECTS)
 	g++ -m64 -Wl,-O1 -o QOcamlBrowser $(CPPOBJECTS) \
@@ -17,7 +19,6 @@ all: kamlo $(MOCFILES) $(CPPOBJECTS)
 
 kamlo:
 	$(MAKE) --no-print-directory -C ocaml all
-
 
 moc_%.cpp: %.h
 	$(MOCQT4) $< > $@

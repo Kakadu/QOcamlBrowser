@@ -1,0 +1,24 @@
+---
+Asdf:
+  methods:
+    tableLength:        [int, int]
+    take:               [int, int, string]
+    selectedIndexAt:    [int, int]
+    setSelectedIndexAt: [int, int, unit]
+    currentPath:        [unit, string]
+    print_data:         [unit, unit]
+  properties:
+      tableCount1:
+        type: int
+        get: tableCount
+        notify: tablesChanged
+      showDescription:
+        type: bool
+        get: canShowDescription
+        notify: showDescriptionChanged
+      itemDescription:
+        type: string
+        get:  getDescription
+        set:  setDescription
+        notify: itemDescriptionChanged
+

@@ -2,6 +2,8 @@ qml/QOcamlBrowser/main.js
 qml/QOcamlBrowser/main.qml
 dataobject.cpp
 dataobject.h
+Asdf.cpp
+Asdf.h
 main.cpp
 ocaml/code.ml
 ocaml/test.ml
@@ -10,3 +12,4 @@ qmlapplicationviewer.h
 qmlapplicationviewer.pri
 kamlo.h
 qml/QOcamlBrowser/ScrollBar.qml
+input_yaml.txt

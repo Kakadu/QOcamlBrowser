@@ -102,6 +102,8 @@ let sigs_in_module = function
 let modules_cache = ref []
 let data = ref []
 
+let description = ref ""
+
 exception Finished_too_early
 exception Finished
 let path_changed
@@ -204,3 +206,52 @@ let init_data : unit -> string list list =
     data := [List.map fst (modules)];
     !data
   end
+
+let getTableCount =
+  with_register "prop_Asdf_tableCount1_get_int" begin fun () ->
+    List.length !data
+end
+
+let showDescriptionFlag = ref false
+let canShowDescription =
+  with_register "prop_Asdf_showDescription_get_bool" begin fun () ->
+  !showDescriptionFlag
+end
+
+let tableLength : int -> int =
+  with_register "userSlots_tableLength_int_int" begin fun x ->
+  List.nth !data x |> List.length
+end
+
+let take : int -> int -> string =
+  with_register "userSlots_take_string_int_int" begin fun x y ->
+  List.nth (List.nth !data x) y
+end
+
+let selectedIndexes = ref [| |]
+let description = ref ""
+
+let () =  (* initialization*)
+  let _ = init_data () in
+  selectedIndexes := Array.of_list (List.map (fun _ -> -1) !data);
+  description := "";
+  showDescriptionFlag := false
+
+let doOCaml lastAffectedColumn =
+  let (_,descr) = path_changed (Array.to_list !selectedIndexes) in
+  match descr with
+  | Some d ->
+      showDescriptionFlag := true;
+      description := d
+  | None -> showDescriptionFlag := false
+;;
+
+let setSelectedIndexAt : int -> int -> bool =
+  with_register "userSlots_setSelectedIndexAt_unit_int_int" begin
+  fun x y ->
+    if !selectedIndexes.(x) <> y then (
+      !selectedIndexes.(x) <- y;
+      doOCaml x;
+      true
+    ) else false
+end
