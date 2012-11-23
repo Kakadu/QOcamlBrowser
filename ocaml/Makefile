@@ -21,8 +21,9 @@ OCAML=ocamlfind opt -package unix -g -I `ocamlc -where`/compiler-libs/utils \
 .PHONY: all clean
 
 all:
+	$(OCAML) -c Asdf.ml
 	$(OCAML) -c code.ml
-	$(OCAML) -linkpkg -output-obj -o camlcode.o  $(TOPLEVEL) code.cmx
+	$(OCAML) -linkpkg -output-obj -o camlcode.o  $(TOPLEVEL) Asdf.cmx code.cmx
 
 test: all
 	$(OCAML) -c test.ml 

@@ -51,7 +51,7 @@ void DataObject::doOCaml(int lastAffectedColumn) {
     emit tablesChanged(0);
     data = ans;
     emit tablesChanged(data.length());
-    //print_data();
+
     while (selectedItems.length() > lastAffectedColumn+1) {
         selectedItems.pop_back();
     }

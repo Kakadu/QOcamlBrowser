@@ -7,6 +7,7 @@ Asdf.h
 main.cpp
 ocaml/code.ml
 ocaml/test.ml
+ocaml/Asdf.ml
 qmlapplicationviewer.cpp
 qmlapplicationviewer.h
 qmlapplicationviewer.pri
