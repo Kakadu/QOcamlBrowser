@@ -56,22 +56,6 @@ let files_in_dir path =
   with
     End_of_file -> Unix.closedir d; !ans
 
-let gamemap = object
-  val mutable title = "mytitle"
-  method title () = title
-  method setTitle s = title <- s
-  val mutable width = 640
-  method width () = width
-  method setWidth s = width <- s
-
-end
-
-let () = Callback.register "prop_Gamemap_title_get_string" gamemap#title
-let () = Callback.register "prop_Gamemap_title_set_string" gamemap#setTitle
-
-let () = Callback.register "prop_Gamemap_width_get_int" gamemap#width
-let () = Callback.register "prop_Gamemap_width_set_int" gamemap#setWidth
-
 let with_register s f =
   Callback.register s f;
   f
@@ -116,29 +100,29 @@ let data = ref []
 let setData ooo newData =
   if !data <> newData then begin
     data := [];
-    ooo#emit_tableCount1 (0);
+    ooo#emit_tablesChanged 0;
     data:=newData;
-    (*ooo#emit_tableCount1 (0); *)
-    ooo#emit_tableCount1 (List.length newData)
+    ooo#emit_tablesChanged (List.length newData)
   end
 
-let print_data () =
-  let s = !data |> List.map (fun xs -> String.concat "; " xs)
+let print_data data =
+  let s = data |> List.map (fun xs -> String.concat "; " xs)
     |> String.concat "];\n[" in
-  printf "[ [ %s ] ]\n" s
-
+  printf "[ [ %s ] ]\n%!" s
+(*
 let description = ref ""
 let setDescription ooo new_val =
   if !description<>new_val then (
     description := new_val;
     ooo#emit_itemDescription new_val
   )
+
 let getDescription
   : Asdf.t -> unit -> string =
   with_register "prop_Asdf_itemDescription_get_string"
   begin fun (_:Asdf.t) () ->
     !description
-  end
+  end*)
 
 exception Finished_too_early
 exception Finished
@@ -147,7 +131,7 @@ let path_changed
   with_register "caml_path_changed"
   begin fun ls ->
     printf "new path: %s\n%!" (String.concat "" (List.map (fun i -> "/"^(string_of_int i)) ls));
-    let ls = List.take_while (fun x -> 0<=x) ls in
+    (*let ls = List.take_while (fun x -> 0<=x) ls in*)
     List.iter (fun i -> assert (i>=0)) ls;
     let moduleName = List.nth (List.hd !data) (List.hd ls) in
     let signature = List.assoc moduleName !modules_cache in
@@ -218,9 +202,12 @@ let path_changed
     (*print_data ();*)
     (!new_data,!descr)
 end
-;;
-let init_data : unit -> string list list =
-  with_register "caml_init_data" begin fun () ->
+
+let selected = ref []
+
+let _foo =
+  with_register "Asdf_init_unit_unit" begin fun cppobj () ->
+    printf "here!\n%!";
     let filenames = files_in_dir ocaml_where
       |> List.filter (fun s -> Filename.check_suffix s ".cmi") in
     let modules = filenames |> List.filter_map (fun filename ->
@@ -233,13 +220,19 @@ let init_data : unit -> string list list =
       (name, Tsig_module (Ident.create name, Types.Tmty_signature s, Types.Trec_not))
     );
     data := [List.map fst (List.take 26 modules)];
+    let obj = new Asdf.asdf cppobj in
     (*data := [List.map fst (modules)];*)
-    !data
+    print_data !data;
+    printf "List.length !data = %d\n%!" (List.length !data);
+    obj#set_tableCount1 (List.length !data);
+    selected := List.map (fun _ -> -1) !data
   end
 
 let getTableCount : Asdf.t -> unit -> int =
   with_register "prop_Asdf_tableCount1_get_int" begin fun _ () ->
-    List.length !data
+    let ans = List.length !data in
+    printf "getTableCount() = %d\n%!" ans;
+    ans
 end
 
 let showDescriptionFlag = ref false
@@ -255,15 +248,16 @@ let setCanShowDescriptionFlag ooo newVal =
   )
 
 let tableLength : Asdf.t -> int -> int =
-  with_register "userSlots_tableLength_int_int" begin fun _ x ->
+  with_register "Asdf_tableLength_int_int" begin fun _ x ->
+  printf "Get length of table %d\n%!" x;
   List.nth !data x |> List.length
 end
 
 let take : Asdf.t -> int -> int -> string =
-  with_register "userSlots_take_string_int_int" begin fun _ x y ->
+  with_register "Asdf_take_string_int_int" begin fun _ x y ->
   List.nth (List.nth !data x) y
 end
-
+(*
 let selectedIndexes = ref [| |]
 let description = ref ""
 
@@ -272,7 +266,8 @@ let () =  (* initialization*)
   selectedIndexes := Array.of_list (List.map (fun _ -> -1) !data);
   description := "";
   showDescriptionFlag := false
-
+*)
+(*
 let doOCaml ooo lastAffectedColumn =
   let (new_data,descr) = path_changed (Array.to_list !selectedIndexes) in
   setData ooo new_data;
@@ -283,45 +278,43 @@ let doOCaml ooo lastAffectedColumn =
       setDescription ooo d;
   | None -> showDescriptionFlag := false
 ;;
+*)
 
 let setSelectedIndexAt : Asdf.t -> int -> int -> bool =
-  with_register "userSlots_setSelectedIndexAt_unit_int_int" begin
-  fun obj lastAffectedColumn y ->
-    printf "setSelectedIndexAt %d to %d\n%!" lastAffectedColumn y;
-    printf "selectedIndexes.length = %d\n" (Array.length !selectedIndexes);
-    if !selectedIndexes.(lastAffectedColumn) <> y then (
+  with_register "Asdf_setSelectedIndexAt_unit_int_int" begin
+  fun obj column newv ->
+    printf "setSelectedIndexAt %d to %d\n%!" column newv;
+    printf "selectedIndexes.length = %d\n" (List.length !selected);
+    assert (List.length !selected > column);
+    assert (column >=0);
+    if List.nth !selected column <> newv then (
       let ooo = new Asdf.asdf obj in
-      !selectedIndexes.(lastAffectedColumn) <- y;
-      let new_indexes = Array.init (1+lastAffectedColumn)
-        (fun n -> !selectedIndexes.(n)) in
-      selectedIndexes := new_indexes;
-      assert (Array.length !selectedIndexes = lastAffectedColumn+1);
-      doOCaml ooo lastAffectedColumn;
-      ooo#emit_tableCount1 0;
-      ooo#emit_tableCount1 (List.length !data);
-      let datalen = List.length !data in
-      (*
-      if Array.length !selectedIndexes > lastAffectedColumn+1 then begin
-        selectedIndexes := Array.init (lastAffectedColumn+1)
-          (fun n -> !selectedIndexes.(n))
-      end; *)
 
-      if Array.length !selectedIndexes < datalen then begin
-        let new_arr = Array.init datalen (fun n ->
-          if n >= (Array.length !selectedIndexes) then -1
-          else if n >= datalen then assert false
-          else !selectedIndexes.(n)
-        )
-        in
-        selectedIndexes := new_arr
-      end else begin
-         for i=lastAffectedColumn+1 to (Array.length !selectedIndexes - 1) do
-           !selectedIndexes.(i) <- -1;
-         done;
-      end;
-      print_data ();
-      printf "selected: [%s]\n%!" (Array.to_list !selectedIndexes
+      let new_indexes =
+        let prefix = if column=0 then[] else List.take (column-1) !selected in
+        prefix@[newv]
+      in
+      selected := new_indexes;
+      assert (List.length !selected = column+1);
+      let (new_data,descr) = path_changed !selected in
+      if List.length new_data > List.length !selected then
+        selected:= !selected @ [-1];
+      setData ooo new_data;
+
+      let () =match descr with
+      | Some d ->
+          ooo#set_setDescription d;
+          ooo#set_showDescription true;
+
+      | None ->
+          ooo#set_showDescription false
+      in
+
+      print_data !data;
+      printf "selected: [%s]\n%!" (!selected
         |> List.map string_of_int |> String.concat "; ");
       true
     ) else false
 end
+
+

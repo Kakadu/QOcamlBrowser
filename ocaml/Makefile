@@ -1,22 +1,22 @@
 OCAML=ocamlfind opt -package unix -g -I `ocamlc -where`/compiler-libs/utils \
 	  -I `ocamlc -where`/compiler-libs/typing \
-	  `ocamlc -where`/compiler-libs/utils/misc.cmx \
-	  `ocamlc -where`/compiler-libs/typing/primitive.cmx \
-	  `ocamlc -where`/compiler-libs/utils/config.cmx \
-	  `ocamlc -where`/compiler-libs/typing/ident.cmx \
-	  `ocamlc -where`/compiler-libs/typing/path.cmx \
-	  `ocamlc -where`/compiler-libs/typing/types.cmx \
-	  `ocamlc -where`/compiler-libs/typing/btype.cmx \
-	  `ocamlc -where`/compiler-libs/typing/predef.cmx \
-	  `ocamlc -where`/compiler-libs/utils/clflags.cmx \
-	  `ocamlc -where`/compiler-libs/typing/oprint.cmx \
-	  `ocamlc -where`/compiler-libs/utils/tbl.cmx \
-	  `ocamlc -where`/compiler-libs/utils/consistbl.cmx \
-	  `ocamlc -where`/compiler-libs/typing/subst.cmx \
-	  `ocamlc -where`/compiler-libs/typing/datarepr.cmx \
-	  `ocamlc -where`/compiler-libs/typing/env.cmx \
-	  `ocamlc -where`/compiler-libs/typing/ctype.cmx \
-	  `ocamlc -where`/compiler-libs/typing/printtyp.cmx \
+	  misc.cmx \
+	  primitive.cmx \
+	  config.cmx \
+	  ident.cmx \
+	  path.cmx \
+	  types.cmx \
+	  btype.cmx \
+	  predef.cmx \
+	  clflags.cmx \
+	  oprint.cmx \
+	  tbl.cmx \
+	  consistbl.cmx \
+	  subst.cmx \
+	  datarepr.cmx \
+	  env.cmx \
+	  ctype.cmx \
+	  printtyp.cmx
 
 .PHONY: all clean
 

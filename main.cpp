@@ -13,6 +13,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QmlApplicationViewer viewer;
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     Asdf d;
+    d.init();
     viewer.rootContext()->setContextProperty("mainData", &d);
     viewer.setMainQmlFile(QLatin1String("qml/QOcamlBrowser/main.qml"));
     viewer.showExpanded();

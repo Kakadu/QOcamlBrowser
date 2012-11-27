@@ -7,6 +7,7 @@ Asdf:
     setSelectedIndexAt: [int, int, unit]
     currentPath:        [unit, string]
     print_data:         [unit, unit]
+    init:               [unit, unit]
   properties:
       tableCount1:
         type: int
