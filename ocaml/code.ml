@@ -100,29 +100,15 @@ let data = ref []
 let setData ooo newData =
   if !data <> newData then begin
     data := [];
-    ooo#emit_tablesChanged 0;
+    ooo#set_tableCount1 0;
     data:=newData;
-    ooo#emit_tablesChanged (List.length newData)
+    ooo#set_tableCount1 (List.length newData)
   end
 
 let print_data data =
   let s = data |> List.map (fun xs -> String.concat "; " xs)
     |> String.concat "];\n[" in
   printf "[ [ %s ] ]\n%!" s
-(*
-let description = ref ""
-let setDescription ooo new_val =
-  if !description<>new_val then (
-    description := new_val;
-    ooo#emit_itemDescription new_val
-  )
-
-let getDescription
-  : Asdf.t -> unit -> string =
-  with_register "prop_Asdf_itemDescription_get_string"
-  begin fun (_:Asdf.t) () ->
-    !description
-  end*)
 
 exception Finished_too_early
 exception Finished
@@ -249,7 +235,7 @@ let setCanShowDescriptionFlag ooo newVal =
 
 let tableLength : Asdf.t -> int -> int =
   with_register "Asdf_tableLength_int_int" begin fun _ x ->
-  printf "Get length of table %d\n%!" x;
+  (*printf "Get length of table %d\n%!" x;*)
   List.nth !data x |> List.length
 end
 
@@ -283,18 +269,19 @@ let doOCaml ooo lastAffectedColumn =
 let setSelectedIndexAt : Asdf.t -> int -> int -> bool =
   with_register "Asdf_setSelectedIndexAt_unit_int_int" begin
   fun obj column newv ->
-    printf "setSelectedIndexAt %d to %d\n%!" column newv;
-    printf "selectedIndexes.length = %d\n" (List.length !selected);
+    printf "setSelectedIndexAt %d to %d\n%!" column newv;(*
+    printf "selectedIndexes.length = %d\n" (List.length !selected);*)
     assert (List.length !selected > column);
     assert (column >=0);
     if List.nth !selected column <> newv then (
       let ooo = new Asdf.asdf obj in
 
       let new_indexes =
-        let prefix = if column=0 then[] else List.take (column-1) !selected in
+        let prefix = if column=0 then[] else List.take column !selected in
         prefix@[newv]
       in
       selected := new_indexes;
+      (*printf "List.length new_indexes = %d\n%!" (List.length new_indexes);*)
       assert (List.length !selected = column+1);
       let (new_data,descr) = path_changed !selected in
       if List.length new_data > List.length !selected then
@@ -310,9 +297,9 @@ let setSelectedIndexAt : Asdf.t -> int -> int -> bool =
           ooo#set_showDescription false
       in
 
-      print_data !data;
+      print_data !data;(*
       printf "selected: [%s]\n%!" (!selected
-        |> List.map string_of_int |> String.concat "; ");
+        |> List.map string_of_int |> String.concat "; "); *)
       true
     ) else false
 end
