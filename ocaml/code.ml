@@ -2,9 +2,15 @@ open Printf
 open Types
 
 let (|>) x f = f x
-let ocaml_where = "/usr/lib/ocaml"
+let ocaml_where = ref "/usr/lib/ocaml"
 let (^/) a b = String.concat "" [a;"/";b]
 let () = Printexc.record_backtrace true
+
+let () =
+  Arg.parse
+    [ ("-I", Arg.Set_string ocaml_where, "Where to look for cmi files")
+    ] (fun s -> printf "Unknown parameter %s\n" s; exit 0)
+    "This is usage message"
 
 module List = struct
   include List
@@ -140,7 +146,7 @@ let path_changed
             printf "We should add new view for module\n%!";
             action := Some (`NewView xs);
             new_data := List.take (List.length !new_data - (List.length tail)) !new_data;
-            printf "New length of data is %d%!" (List.length !new_data);
+            printf "New length of data is %d\n%!" (List.length !new_data);
             raise Finished
           end
         | Types.Tsig_module (ident,_,_) when is_last -> begin
@@ -193,11 +199,10 @@ let selected = ref []
 
 let _foo =
   with_register "Asdf_init_unit_unit" begin fun cppobj () ->
-    printf "here!\n%!";
-    let filenames = files_in_dir ocaml_where
+    let filenames = files_in_dir !ocaml_where
       |> List.filter (fun s -> Filename.check_suffix s ".cmi") in
     let modules = filenames |> List.filter_map (fun filename ->
-      let sign = process_cmi_file (ocaml_where ^/ filename) in
+      let sign = process_cmi_file (!ocaml_where ^/ filename) in
       let basename = Filename.chop_suffix filename ".cmi" in
       let moduleName = modulename_of_file basename in
       Some (moduleName, sign)
@@ -205,9 +210,9 @@ let _foo =
     modules_cache := modules |> List.map (fun (name,s) ->
       (name, Tsig_module (Ident.create name, Types.Tmty_signature s, Types.Trec_not))
     );
-    data := [List.map fst (List.take 26 modules)];
+    (*data := [List.map fst (List.take 26 modules)]; *)
     let obj = new Asdf.asdf cppobj in
-    (*data := [List.map fst (modules)];*)
+    data := [List.map fst (modules)];
     print_data !data;
     printf "List.length !data = %d\n%!" (List.length !data);
     obj#set_tableCount1 (List.length !data);
