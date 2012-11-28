@@ -1,0 +1,14 @@
+It is demo app which should have same features that standart ocamlbrowser
+based on Tcl/Tk does have. But main purpose of this app is to test
+*creating apps using OCaml and QML*!
+
+Known problems:
+* We using function Printtyp.signature to geenrate description for the item.
+  But sometimes it generates empty string. Not idea why.
+
+* If we execute `./QOcamlbrowser -I ocaml` and then we select Asdf module
+we can see three items called `asdf`. Clicking by one of them raises OCaml 
+exception: `Assert_failure("typing/printtyp.ml", 826, 6)`. Not idea why yet.
+But in standart OCaml browser exists only one item for `asdf`.
+
+
